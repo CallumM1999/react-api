@@ -50,6 +50,9 @@ module.exports = (app, mongoose) => {
     app.post('/register', (req, res) => {
         const { email, password } = req.body;
 
+        console.log('req body', req.body, email, password)
+
+
         if (!email || !password) return res.status(400).send();
         
         User.findOne({ email }, (err, user) => {
@@ -74,7 +77,7 @@ module.exports = (app, mongoose) => {
 
                     const token = generateToken(tokenData);
 
-                    res.status(201).json({ // 201 created
+                   return res.status(201).json({ // 201 created
                         token,
                         ...tokenData
                     });

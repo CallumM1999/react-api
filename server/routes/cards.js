@@ -28,8 +28,9 @@ module.exports = (app, mongoose) => {
                 if (error) return res.status(400).send();
                 res.status(200).send();
             })
+        } else {
+            res.status(400).send();
         }
-        return res.status(400).send();
     });
 
     app.delete('/cards', checkAuth, (req, res) => {
@@ -42,8 +43,9 @@ module.exports = (app, mongoose) => {
                 if (err) return res.status(400).send();
                 res.status(200).json({ data: JSON.stringify(data) });
             })
+        } else {
+            res.status(400).send();            
         }
-        res.status(400).send();
     });
 
     // edit deck
@@ -56,7 +58,8 @@ module.exports = (app, mongoose) => {
                 if (err) return res.status(400).send();
                 res.status(200).send();
             });
+        } else {
+            res.status(400).send();
         }
-        res.status(400).send();
     })
 }
