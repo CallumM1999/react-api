@@ -1,0 +1,20 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "<callummac@protonmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.4",
+    "jsonwebtoken": "8.3.0",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.3.7",
+    "nodemon": "^1.18.5"
+  },
+  "scripts": {
+    "start": "node server/server.js"
+  }
+}
