@@ -12,7 +12,9 @@ app.use(cors());
 
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/anki', { useNewUrlParser: true })     
+const localURI = 'mongodb://localhost/anki';
+
+mongoose.connect(process.env.MONGODB_URI || localURI, { useNewUrlParser: true })     
 
 
 // routes

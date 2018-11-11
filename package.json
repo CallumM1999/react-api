@@ -16,5 +16,8 @@
   },
   "scripts": {
     "start": "node server/server.js"
+  },
+  "engines": {
+    "node": "8.10.0"
   }
 }
