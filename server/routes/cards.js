@@ -39,7 +39,8 @@ module.exports = (app, mongoose) => {
         if (id) {
             Card.findOneAndDelete({ id }, (err, deck) => {
                 if (err) return res.status(400).send();
-                res.status(200).json({ data: JSON.stringify(data) });
+                if (!deck) return res.status(404).send();
+                res.status(200).send();
             })
         } else {
             res.status(400).send();            
