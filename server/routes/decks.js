@@ -29,13 +29,12 @@ module.exports = (app, mongoose) => {
     });
 
     app.delete('/decks', checkAuth, (req, res) => {
-        const data = req.headers.data;
-
-        if (data) {
-            const id = data.id;
-
+        const id = req.headers.id;
+        if (id) {
             Deck.findOneAndDelete({ id }, (err, deck) => {
+
                 if (err) return res.status(400).send();
+                if (!deck) return res.status(404).send();
                 res.status(200).send();
             })
         } else {

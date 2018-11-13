@@ -11,7 +11,7 @@ module.exports = (app, mongoose) => {
 
     // routes 
     app.get('/cards', checkAuth, (req, res) => {
-        const { id } = req.headers;
+        const id = req.headers.id;
 
         Card.find({deck: id}, (err, cards) => {
             if (err) return res.status(400).send();
@@ -34,11 +34,9 @@ module.exports = (app, mongoose) => {
     });
 
     app.delete('/cards', checkAuth, (req, res) => {
-        const data = req.headers.data;
+        const id = req.headers.id;
 
-        if (data) {
-            const id = data.id;
-
+        if (id) {
             Card.findOneAndDelete({ id }, (err, deck) => {
                 if (err) return res.status(400).send();
                 res.status(200).json({ data: JSON.stringify(data) });
