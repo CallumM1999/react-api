@@ -1,17 +1,19 @@
 const checkAuth = require('../middleware/check-auth');
 
-module.exports = (app, mongoose) => {
-    const Deck = mongoose.model('decks', { name: String, id: String, owner: String })
+const Deck = require('../mongoose/models/Deck');
 
-    // routes 
+
+module.exports = (app, mongoose) => {
+
+// routes 
     app.get('/decks', checkAuth, (req, res) => {
         const id = req.headers.id;
 
         Deck.find({ owner: id }, (err, data) => {
             if (err) return res.status(400).send();
             res.type('json').status(200).json(data);
-        })
-    })
+        });
+    });
 
     app.post('/decks', checkAuth, (req, res) => {
         const data = req.body;
@@ -22,7 +24,7 @@ module.exports = (app, mongoose) => {
             newDeck.save((error, deck) => {
                 if (error) return res.status(400).send();
                 res.status(200).send();
-            })
+            });
         } else {
             res.status(400).send();
         }
@@ -36,7 +38,7 @@ module.exports = (app, mongoose) => {
                 if (err) return res.status(400).send();
                 if (!deck) return res.status(404).send();
                 res.status(200).send();
-            })
+            });
         } else {
             res.status(400).send();
         }
@@ -44,7 +46,7 @@ module.exports = (app, mongoose) => {
 
     // rename deck
     app.put('/decks', checkAuth, (req, res) => {
-        const { name, id } = req.body;
+    const { name, id } = req.body;
 
         if (name) {
             Deck.findOneAndUpdate({ id }, { name }, (err, deck) => {
@@ -52,5 +54,5 @@ module.exports = (app, mongoose) => {
                 res.status(200).send();
             });
         }
-    })
-}
+    });
+};

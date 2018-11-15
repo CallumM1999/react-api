@@ -1,21 +1,14 @@
 const bcrypt = require('bcrypt');
 const bcrypt_rounds = 4;
 const generateToken = require('../generateToken');
+const transporter = require('../mail/transporter');
 
-module.exports = (app, mongoose) => {
+const template_forgot = require('../mail/templates/forgot');
+const template_verify = require('../mail/templates/verify');
 
-    const User = mongoose.model('user', { 
-        name: String, 
-        age: Number, 
-        email: String, 
-        password: String,
-        confirmed: {
-            type: Boolean,
-            default: false
-        },
-        confirmationCode: String,
-     }
-    );
+const User = require('../mongoose/models/User');
+
+module.exports = (app, mongoose) => {   
 
     // 401 unauthorized
     app.get('/login', (req, res) => {
@@ -30,7 +23,7 @@ module.exports = (app, mongoose) => {
             const tokenData = {
                 email: user.email,
                 id: user._id
-            }
+            };
 
             bcrypt.compare(password, user.password, (err, match) => {
                 if (err) return res.status(401).send();
@@ -43,15 +36,12 @@ module.exports = (app, mongoose) => {
                     });
                 }
                 res.status(401).send();
-            })
+            });
         }); 
     });
 
     app.post('/register', (req, res) => {
         const { email, password } = req.body;
-
-        console.log('req body', req.body, email, password)
-
 
         if (!email || !password) return res.status(400).send();
         
@@ -63,8 +53,7 @@ module.exports = (app, mongoose) => {
             bcrypt.hash(password, bcrypt_rounds, (err, output) => {
                 const newUser = new User({ 
                     email, 
-                    password: output, 
-                    confirmationCode: 'a6sd6a6dtasdbsad' 
+                    password: output
                 });
 
                 newUser.save((err, newUser) => {
@@ -73,9 +62,14 @@ module.exports = (app, mongoose) => {
                     const tokenData = {
                         email: newUser.email,
                         id: newUser._id
-                    }
+                    };
 
                     const token = generateToken(tokenData);
+ 
+                    transporter.sendMail(template_verify(email), (error, info) => {
+                        // if (error) return res.status(408).send();
+                        // res.status(200).send();
+                    });
 
                    return res.status(201).json({ // 201 created
                         token,
@@ -87,8 +81,53 @@ module.exports = (app, mongoose) => {
     });
 
     app.get('/reset', (req, res) => {
-        res.json({
-            message: 'reset function not built yet!'
+        const { email } = req.headers;
+
+        if (!email) return res.status(404).send();
+
+        const code = String(Math.floor(Math.random() * 100000)); // 6 digits
+
+        // add code to user in database
+        User.findOneAndUpdate({ email }, { code }, (err, user) => {
+            if (err) return res.status(400).send();
+            if (!user) return res.status(404).send();
+
+            transporter.sendMail(template_forgot(email, code), (error, info) => {
+                if (error) return res.status(408).send();
+                
+                res.status(200).send();
+            });
         });
-    })
-}
+    });
+
+    app.get('/reset/resend', (req, res) => {
+        const { email } = req.headers;
+
+        if (!email) return res.status(404).send();
+
+        User.findOne({ email }, (err, user) => {
+            if (err) return res.status(400).send();
+            if (!user) return res.status(404).send();
+        
+            const { code } = user;
+
+            transporter.sendMail(template_forgot(email, code), (error, info) => {
+                if (error) return res.status(408).send();
+                res.status(200).send();
+            });
+        });
+    });
+
+    app.post('/reset', (req, res) => {
+        const { email, code } = req.headers;
+
+        if (!email || !code) return res.status(404).send();
+
+        User.findOneAndUpdate({ email, code }, { code: null }, (err, user) => {
+            if (err) return res.status(400).send();
+            if (!user) return res.status(404).send();
+            
+            res.status(200).send();
+        });
+    });
+};

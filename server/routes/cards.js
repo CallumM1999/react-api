@@ -1,13 +1,9 @@
 const checkAuth = require('../middleware/check-auth');
 
-module.exports = (app, mongoose) => {
+const Card = require('../mongoose/models/Card');
 
-    const Card = mongoose.model('cards', { 
-        deck: String,
-        front: String,
-        back: String,
-        id: String
-    })
+
+module.exports = (app, mongoose) => {
 
     // routes 
     app.get('/cards', checkAuth, (req, res) => {
@@ -16,8 +12,8 @@ module.exports = (app, mongoose) => {
         Card.find({deck: id}, (err, cards) => {
             if (err) return res.status(400).send();
             res.type('json').status(200).json(cards);
-        })
-    })
+        });
+    });
 
     app.post('/cards', checkAuth, (req, res) => {
         const data = req.body;
@@ -27,7 +23,7 @@ module.exports = (app, mongoose) => {
             newCard.save((error, deck) => {
                 if (error) return res.status(400).send();
                 res.status(200).send();
-            })
+            });
         } else {
             res.status(400).send();
         }
@@ -41,7 +37,7 @@ module.exports = (app, mongoose) => {
                 if (err) return res.status(400).send();
                 if (!deck) return res.status(404).send();
                 res.status(200).send();
-            })
+            });
         } else {
             res.status(400).send();            
         }
@@ -60,5 +56,5 @@ module.exports = (app, mongoose) => {
         } else {
             res.status(400).send();
         }
-    })
-}
+    });
+};
