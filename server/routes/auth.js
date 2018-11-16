@@ -80,12 +80,13 @@ module.exports = (app, mongoose) => {
         });
     });
 
-    app.get('/reset', (req, res) => {
+    // generate code
+    app.get('/reset/code', (req, res) => {
         const { email } = req.headers;
 
         if (!email) return res.status(404).send();
 
-        const code = String(Math.floor(Math.random() * 100000)); // 6 digits
+        const code = String(Math.floor(Math.random() * 1000000)); // 6 digits
 
         // add code to user in database
         User.findOneAndUpdate({ email }, { code }, (err, user) => {
@@ -99,8 +100,9 @@ module.exports = (app, mongoose) => {
             });
         });
     });
-
-    app.get('/reset/resend', (req, res) => {
+    
+    // resend code
+    app.get('/reset/code/resend', (req, res) => {
         const { email } = req.headers;
 
         if (!email) return res.status(404).send();
@@ -118,16 +120,36 @@ module.exports = (app, mongoose) => {
         });
     });
 
-    app.post('/reset', (req, res) => {
+    // confirm code
+    app.post('/reset/confirm', (req, res) => {
         const { email, code } = req.headers;
 
         if (!email || !code) return res.status(404).send();
 
-        User.findOneAndUpdate({ email, code }, { code: null }, (err, user) => {
+        User.findOne({ email, code }, (err, user) => {
             if (err) return res.status(400).send();
             if (!user) return res.status(404).send();
             
             res.status(200).send();
         });
+    });
+
+    app.post('/reset/update', (req, res) => {
+        const { email, code, password } = req.headers;
+
+        if (!email || !code || !password) return res.status(404).send();
+
+
+        bcrypt.hash(password, bcrypt_rounds, (err, output) => {
+            
+            User.findOneAndUpdate({ email, code }, { password: output, code: null }, (err, user) => {
+                if (err) return res.status(400).send();
+                if (!user) return res.status(404).send();
+    
+                res.status(200).send();
+            });
+
+        });   
+
     });
 };
