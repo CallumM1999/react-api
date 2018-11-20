@@ -13,7 +13,8 @@
     "mongodb": "^3.1.8",
     "mongoose": "^5.3.7",
     "nodemailer": "^4.6.8",
-    "nodemon": "^1.18.5"
+    "nodemon": "^1.18.5",
+    "validator": "10.9.0"
   },
   "scripts": {
     "start": "node server/server.js"
