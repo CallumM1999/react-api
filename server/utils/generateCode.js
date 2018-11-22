@@ -1,5 +1,4 @@
-const characterRange = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
+const characterRange = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 const generateCode = length => {
 

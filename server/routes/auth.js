@@ -27,12 +27,12 @@ module.exports = (app, mongoose) => {
         const normalizedEmail = validator.normalizeEmail(email);
 
         const user = await findUser({ email: normalizedEmail });
-        if (!user) return res.status(401).send('user doesn\' exist');
+        if (!user) return res.status(401).send();
 
         const tokenData = { email: normalizedEmail, id: user._id };
 
         const match = await bcrypt.compareSync(password, user.password);
-        if (!match) return res.status(401).send('invalid password');
+        if (!match) return res.status(401).send();
 
         const token = generateToken(tokenData);
 
