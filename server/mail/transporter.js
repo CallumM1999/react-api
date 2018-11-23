@@ -10,6 +10,8 @@ try {
     }
 }
 
+console.log('auth', auth)
+
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     secure: false,
