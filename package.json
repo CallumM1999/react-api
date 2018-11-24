@@ -17,9 +17,16 @@
     "validator": "10.9.0"
   },
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "test": "mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'yarn test'"
   },
   "engines": {
     "node": "8.10.0"
+  },
+  "devDependencies": {
+    "expect": "^23.6.0",
+    "mocha": "3.0.2",
+    "supertest": "2.0.0"
   }
 }
