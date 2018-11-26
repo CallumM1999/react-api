@@ -98,7 +98,27 @@ describe('POST /cards - Add card', () => {
 
     before(done => {
 
-        done();
+        Card.remove({}).then(() => {
+            Deck.remove({}).then(() => {
+                User.remove({}).then(() => {
+                    request(app)
+                    .post('/register')
+                    .send({ email, password })
+                    .then(response => {
+                        token = response.body.token;
+                        userID = response.body.id;
+    
+                        const newDeck = new Deck({ name: deckName, owner: userID });
+                        newDeck.save((error, deck) => {
+                            if (error) done(error);
+                            deckID = deck._id;
+                            done();
+                        });
+                    }).catch(e => done(e));
+                }).catch(e => done(e));
+            }).catch(e => done(e));
+        }).catch(e => done(e));
+    
     })
 
     it('should add a card', done => {
@@ -106,7 +126,7 @@ describe('POST /cards - Add card', () => {
         .post('/cards')
         .set('authorization', token)
         .send({
-            deck: deckID,
+            deckID,
             front,
             back
         })
@@ -147,7 +167,7 @@ describe('POST /cards - Add card', () => {
             back
         })
         .then(response => {
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
             done();
         })
         .catch(e => done(e));
@@ -162,7 +182,7 @@ describe('POST /cards - Add card', () => {
             front
         })
         .then(response => {
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
             done();
         })
         .catch(e => done(e));
@@ -178,7 +198,7 @@ describe('POST /cards - Add card', () => {
             front
         })
         .then(response => {
-            expect(response.status).toBe(500);
+            expect(response.status).toBe(404);
             done();
         })
         .catch(e => done(e));

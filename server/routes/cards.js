@@ -21,14 +21,11 @@ router.get('/cards', checkAuth, (req, res) => {
 });
 
 router.post('/cards', checkAuth, (req, res) => {
-
-    const { front, back } = req.body;
-    const deckID = req.body.deck;
+    const { front, back, deckID } = req.body;
 
     Deck.findById(deckID, (error, deck) => {
-        if (deck) return res.status(404).send('deck doesnt exist');
         if (error) return res.status(500).send('some error');
-        
+        if (!deck) return res.status(404).send('deck doesnt exist');
 
         const newCard = new Card({ front, back, deck:deckID });
 
