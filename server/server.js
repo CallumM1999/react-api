@@ -14,7 +14,8 @@ const localURI = 'mongodb://localhost/anki';
 const testURI = 'mongodb://localhost/test';
 
 const URL = !!process.env.TESTING ? testURI : process.env.testURI || process.env.MONGODB_URI || localURI;
-mongoose.connect(URL, { useNewUrlParser: true }); 
+mongoose.connect(URL, { useNewUrlParser: true })
+.catch(error => console.log('========    error connecting to mongo    ========', error)); 
 
 app.use(require('./routes/decks'));
 app.use(require('./routes/cards'));
