@@ -111,7 +111,7 @@ router.post('/reset/confirm', asyncMiddleware(async (req, res, next) => {
     if (!email || !code) return res.status(404).send();
 
     const foundUser = await findUser({ email: normalizedEmail, code });
-    if (!foundUser) return res.status(401).send('user not found');
+    if (!foundUser) return res.status(404).send('user not found');
     res.status(200).send();
 }));
 
