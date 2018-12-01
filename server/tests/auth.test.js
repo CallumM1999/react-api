@@ -65,7 +65,7 @@ describe('register user POST /register', () => {
     });
 })
 
-describe('auth GET /login', () => {
+describe('auth POST /login', () => {
 
     before(done => {
         bcrypt.hash(password, 4, (err, hash) => {
@@ -80,10 +80,11 @@ describe('auth GET /login', () => {
 
     it('should reject - invalid password', done => {
         request(app)
-        .get('/login')
-        .set('email', email)
-        .set('password', 'wrongpassword')
-        .send()
+        .post('/login')
+        .send({
+            email,
+            password: 'wrongpassword'
+        })
         .then(response => {
             expect(response.status).toBe(401)
             done();
@@ -92,10 +93,11 @@ describe('auth GET /login', () => {
     
     it('should reject - non registered email address', done => {
         request(app)
-        .get('/login')
-        .set('email', 'email2@email.com')
-        .set('password', password)
-        .send()
+        .post('/login')
+        .send({
+            email: 'email2@gmail.com',
+            password
+        })
         .then(response => {
             expect(response.status).toBe(401)
             done();
@@ -104,10 +106,11 @@ describe('auth GET /login', () => {
 
     it('should login', done => {        
         request(app)
-        .get('/login')
-        .set('email', email)
-        .set('password', password)
-        .send()
+        .post('/login')
+        .send({
+            email,
+            password
+        })
         .then(response => {
             expect(response.status).toBe(200)
             expect(response.body).toHaveProperty('token')
@@ -119,7 +122,7 @@ describe('auth GET /login', () => {
     })
 })
 
-describe('GET /reset/code', () => {
+describe('POST /reset/code', () => {
     before(done => {
         bcrypt.hash(password, 4, (err, hash) => {
             const newUser = new User({ email, password:hash });
@@ -133,9 +136,10 @@ describe('GET /reset/code', () => {
 
     it('should get code' , done => {
         request(app)
-        .get('/reset/code')
-        .set('email', email)
-        .send()
+        .post('/reset/code')
+        .send({
+            email
+        })
         .then(response => {
             expect(response.status).toBe(204);
             User.findOne({ email }, (err, user) => {
@@ -149,9 +153,10 @@ describe('GET /reset/code', () => {
 
     it('should reject - no email' , done => {
         request(app)
-        .get('/reset/code')
-        .set('email', '')
-        .send()
+        .post('/reset/code')
+        .send({
+            email: ''
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done()
@@ -160,9 +165,10 @@ describe('GET /reset/code', () => {
 
     it('should reject - not registered email' , done => {
         request(app)
-        .get('/reset/code')
-        .set('email', 'email2@email.com')
-        .send()
+        .post('/reset/code')
+        .send({
+            email: 'email2@email.com'
+        })
         .then(response => {
             expect(response.status).toBe(204);
             done()
@@ -171,7 +177,7 @@ describe('GET /reset/code', () => {
     
 });
 
-describe('GET /reset/code/resend', () => {
+describe('POST /reset/code/resend', () => {
     before(done => {
         bcrypt.hash(password, 4, (err, hash) => {
             const newUser = new User({ email, password:hash });
@@ -185,9 +191,10 @@ describe('GET /reset/code/resend', () => {
 
     it('should get code' , done => {
         request(app)
-        .get('/reset/code/resend')
-        .set('email', email)
-        .send()
+        .post('/reset/code/resend')
+        .send({
+            email
+        })
         .then(response => {
             expect(response.status).toBe(204);
             User.findOne({ email }, (err, user) => {
@@ -204,9 +211,10 @@ describe('GET /reset/code/resend', () => {
 
     it('should reject - no email' , done => {
         request(app)
-        .get('/reset/code/resend')
-        .set('email', '')
-        .send()
+        .post('/reset/code/resend')
+        .send({
+            email: ''
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done()
@@ -215,9 +223,10 @@ describe('GET /reset/code/resend', () => {
 
     it('should reject - not registered email' , done => {
         request(app)
-        .get('/reset/code/resend')
-        .set('email', 'email2@email.com')
-        .send()
+        .post('/reset/code/resend')
+        .send({
+            email: 'email2@email.com'
+        })
         .then(response => {
             expect(response.status).toBe(204);
             done()
@@ -244,9 +253,10 @@ describe('POST /reset/confirm', () => {
     it('should confirm' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', email)
-        .set('code', code)
-        .send()
+        .send({
+            email,
+            code
+        })
         .then(response => {
             expect(response.status).toBe(204);
             done();
@@ -256,9 +266,10 @@ describe('POST /reset/confirm', () => {
     it('should reject - no email' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', '')
-        .set('code', code)
-        .send()
+        .send({
+            email: '',
+            code
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done();
@@ -268,9 +279,10 @@ describe('POST /reset/confirm', () => {
     it('should reject - invalid email' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', 'aadadhasdbadausb')
-        .set('code', code)
-        .send()
+        .send({
+            email: 'aadadhasdbadausb',
+            code
+        })
         .then(response => {
             expect(response.status).toBe(404);
             done();
@@ -280,8 +292,9 @@ describe('POST /reset/confirm', () => {
     it('should reject - no email' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('code', code)
-        .send()
+        .send({
+            code
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done();
@@ -291,9 +304,10 @@ describe('POST /reset/confirm', () => {
     it('should reject - invalid code' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', email)
-        .set('code', 'aaaabbbb')
-        .send()
+        .send({
+            email,
+            code: 'aaaabbbb'
+        })
         .then(response => {
             expect(response.status).toBe(404);
             done();
@@ -303,9 +317,10 @@ describe('POST /reset/confirm', () => {
     it('should reject - no code' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', email)
-        .set('code', '')
-        .send()
+        .send({
+            email, 
+            code: ''
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done();
@@ -334,10 +349,11 @@ describe('POST /reset/update', () => {
     it('should confirm' , done => {
         request(app)
         .post('/reset/update')
-        .set('email', email)
-        .set('code', code)
-        .set('password', password)
-        .send()
+        .send({
+            email,
+            code,
+            password
+        })
         .then(response => {
             expect(response.status).toBe(204);
             done();
@@ -347,10 +363,11 @@ describe('POST /reset/update', () => {
     it('should reject - invalid code' , done => {
         request(app)
         .post('/reset/update')
-        .set('email', email)
-        .set('code', 'aaaabbbb')
-        .set('password', password)
-        .send()
+        .send({
+            email,
+            code: 'aaaabbbb',
+            password
+        })
         .then(response => {
             expect(response.status).toBe(404);
             done();
@@ -360,10 +377,11 @@ describe('POST /reset/update', () => {
     it('should reject - non existent email' , done => {
         request(app)
         .post('/reset/update')
-        .set('email', 'email2@email.com')
-        .set('code', code)
-        .set('password', password)
-        .send()
+        .send({
+            email: 'email2@email.com',
+            code,
+            password
+        })
         .then(response => {
             expect(response.status).toBe(404);
             done();
@@ -373,10 +391,11 @@ describe('POST /reset/update', () => {
     it('should reject - invalid email' , done => {
         request(app)
         .post('/reset/update')
-        .set('email', 'a8dnf8ad8n')
-        .set('code', code)
-        .set('password', password)
-        .send()
+        .send({
+            email: 'a8dnf8ad8n',
+            code,
+            password
+        })
         .then(response => {
             expect(response.status).toBe(404);
             done();
@@ -386,10 +405,11 @@ describe('POST /reset/update', () => {
     it('should reject - no password' , done => {
         request(app)
         .post('/reset/update')
-        .set('email', email)
-        .set('code', code)
-        .set('password', '')
-        .send()
+        .send({
+            email,
+            code,
+            password: ''
+        })
         .then(response => {
             expect(response.status).toBe(400);
             done();

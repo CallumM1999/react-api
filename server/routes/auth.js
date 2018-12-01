@@ -17,8 +17,8 @@ const template_forgot = require('../mail/templates/forgot');
 
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 
-router.get('/login', asyncMiddleware(async (req, res, next) => {
-    const { email, password } = req.headers;
+router.post('/login', asyncMiddleware(async (req, res, next) => {
+    const { email, password } = req.body;
     if (!email || !password) return res.status(400).send('Missing email or password');
 
     const normalizedEmail = validator.normalizeEmail(email);
@@ -63,9 +63,9 @@ router.post('/register', asyncMiddleware(async (req, res, next) => {
 
 
 // generate code
-router.get('/reset/code', asyncMiddleware(async (req, res, next) => {
+router.post('/reset/code', asyncMiddleware(async (req, res, next) => {
 
-    const { email } = req.headers;
+    const { email } = req.body;
 
     if (!email) return res.status(400).send('Missing email field');
 
@@ -85,9 +85,9 @@ router.get('/reset/code', asyncMiddleware(async (req, res, next) => {
 }));
 
 // resend code
-router.get('/reset/code/resend', asyncMiddleware(async (req, res, next) => {            
+router.post('/reset/code/resend', asyncMiddleware(async (req, res, next) => {            
     
-    const { email } = req.headers;
+    const { email } = req.body;
 
     if (!email) return res.status(400).send('Missing email field');
 
@@ -107,7 +107,7 @@ router.get('/reset/code/resend', asyncMiddleware(async (req, res, next) => {
 
 // confirm code
 router.post('/reset/confirm', asyncMiddleware(async (req, res, next) => {
-    const { email, code } = req.headers;
+    const { email, code } = req.body;
 
     if (!email || !code) return res.status(400).send('Missing email and or code fields.');
     const normalizedEmail = validator.normalizeEmail(email);
@@ -118,7 +118,7 @@ router.post('/reset/confirm', asyncMiddleware(async (req, res, next) => {
 }));
 
 router.post('/reset/update', asyncMiddleware(async (req, res, next) => {
-    const { email, code, password } = req.headers;
+    const { email, code, password } = req.body;
 
     if (!email || !code || !password) return res.status(400).send('Missing email, password and or code fields.');
 
