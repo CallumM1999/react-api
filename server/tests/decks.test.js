@@ -165,7 +165,7 @@ describe('DELETE /decks', () => {
         .set('id', 'gyuj')
         .send()
         .then(response => {
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
             done();
         }).catch(e => done(e));
     })
@@ -246,7 +246,7 @@ describe('PUT /decks - update', () => {
             id: deckID + 's'
         })
         .then(response => {
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
             done();
 
         }).catch(e => done(e));

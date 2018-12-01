@@ -147,7 +147,7 @@ describe('POST /cards - Add card', () => {
         request(app)
         .post('/cards')
         .send({
-            deck: deckID,
+            deckID,
             front,
             back
         })
@@ -163,11 +163,11 @@ describe('POST /cards - Add card', () => {
         .post('/cards')
         .set('authorization', token)
         .send({
-            deck: deckID,
+            deckID,
             back
         })
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done();
         })
         .catch(e => done(e));
@@ -178,11 +178,11 @@ describe('POST /cards - Add card', () => {
         .post('/cards')
         .set('authorization', token)
         .send({
-            deck: deckID,
+            deckID,
             front
         })
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done();
         })
         .catch(e => done(e));
@@ -193,7 +193,7 @@ describe('POST /cards - Add card', () => {
         .post('/cards')
         .set('authorization', token)
         .send({
-            deck: deckID + 'a',
+            deckID: deckID + 'a',
             back,
             front
         })
@@ -258,7 +258,7 @@ describe('DELETE /cards - Delete card', () => {
         .set('authorization', token)
         .set('id', cardID + 'a')
         .then(response => {
-            expect(response.status).toBe(400)
+            expect(response.status).toBe(404)
             done()
         })
         .catch(e => done(e));
@@ -331,7 +331,7 @@ describe('Put /cards - Update card', () => {
             id: cardID + 'a'
         })
         .then(response => {
-            expect(response.status).toBe(400);
+            expect(response.status).toBe(404);
             done();
         })
         .catch(e => done(e));

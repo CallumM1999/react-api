@@ -32,7 +32,7 @@ describe('register user POST /register', () => {
         .post('/register')
         .send({ email, password })
         .then(response => {
-            expect(response.status).toBe(200)
+            expect(response.status).toBe(201)
             expect(response.body).toHaveProperty('token')
             expect(response.body).toHaveProperty('email', email)
             expect(response.body).toHaveProperty('id')
@@ -97,7 +97,7 @@ describe('auth GET /login', () => {
         .set('password', password)
         .send()
         .then(response => {
-            expect(response.status).toBe(404)
+            expect(response.status).toBe(401)
             done();
         }).catch(error => done(error))
     });    
@@ -137,7 +137,7 @@ describe('GET /reset/code', () => {
         .set('email', email)
         .send()
         .then(response => {
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(204);
             User.findOne({ email }, (err, user) => {
                 if (err) return done(err);
                 expect(user).toHaveProperty('email', email)
@@ -153,7 +153,7 @@ describe('GET /reset/code', () => {
         .set('email', '')
         .send()
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done()
         }).catch(error => done(error))
     });
@@ -164,7 +164,7 @@ describe('GET /reset/code', () => {
         .set('email', 'email2@email.com')
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(204);
             done()
         }).catch(error => done(error))
     });
@@ -189,7 +189,7 @@ describe('GET /reset/code/resend', () => {
         .set('email', email)
         .send()
         .then(response => {
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(204);
             User.findOne({ email }, (err, user) => {
                 if (err) return done(err);
 
@@ -208,7 +208,7 @@ describe('GET /reset/code/resend', () => {
         .set('email', '')
         .send()
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done()
         }).catch(error => done(error))
     });
@@ -219,7 +219,7 @@ describe('GET /reset/code/resend', () => {
         .set('email', 'email2@email.com')
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(204);
             done()
         }).catch(error => done(error))
     });
@@ -248,7 +248,7 @@ describe('POST /reset/confirm', () => {
         .set('code', code)
         .send()
         .then(response => {
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(204);
             done();
         }).catch(error => done(error))
     });
@@ -260,7 +260,7 @@ describe('POST /reset/confirm', () => {
         .set('code', code)
         .send()
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done();
         }).catch(error => done(error))
     });
@@ -272,7 +272,7 @@ describe('POST /reset/confirm', () => {
         .set('code', code)
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(404);
             done();
         }).catch(error => done(error))
     });
@@ -280,11 +280,10 @@ describe('POST /reset/confirm', () => {
     it('should reject - no email' , done => {
         request(app)
         .post('/reset/confirm')
-        .set('email', 'email2@email.com')
         .set('code', code)
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(400);
             done();
         }).catch(error => done(error))
     });
@@ -296,7 +295,7 @@ describe('POST /reset/confirm', () => {
         .set('code', 'aaaabbbb')
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(404);
             done();
         }).catch(error => done(error))
     });
@@ -308,7 +307,7 @@ describe('POST /reset/confirm', () => {
         .set('code', '')
         .send()
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done();
         }).catch(error => done(error))
     });
@@ -340,7 +339,7 @@ describe('POST /reset/update', () => {
         .set('password', password)
         .send()
         .then(response => {
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(204);
             done();
         }).catch(error => done(error))
     });
@@ -353,7 +352,7 @@ describe('POST /reset/update', () => {
         .set('password', password)
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(404);
             done();
         }).catch(error => done(error))
     });
@@ -366,7 +365,7 @@ describe('POST /reset/update', () => {
         .set('password', password)
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(404);
             done();
         }).catch(error => done(error))
     });
@@ -379,7 +378,7 @@ describe('POST /reset/update', () => {
         .set('password', password)
         .send()
         .then(response => {
-            expect(response.status).toBe(401);
+            expect(response.status).toBe(404);
             done();
         }).catch(error => done(error))
     });
@@ -392,7 +391,7 @@ describe('POST /reset/update', () => {
         .set('password', '')
         .send()
         .then(response => {
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
             done();
         }).catch(error => done(error))
     });

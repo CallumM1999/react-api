@@ -8,14 +8,15 @@ const Deck = require('../mongoose/models/Deck');
 router.get('/cards', checkAuth, (req, res) => {
     const deckID = req.headers.deck;
 
-    if (!deckID) return res.status(404).send();
+    if (!deckID) return res.status(400).send('Unspecified deck');
 
     Deck.findById(deckID, (err, deck) => {
-        if (err) return res.status(404).send();
+        if (err) return res.status(404).send('Error finding deck');
 
         Card.find({ deck: deckID }, (err, cards) => {
-            if (err) return res.status(400).send();
-            res.type('json').status(200).json(cards);
+            if (err) return res.status(404).send('Errpr finding cards');
+            // if (!cards) return res.status(404).send('Errpr finding cards');
+            res.type('json').status(200).json(cards); // no cards isnt an error
         });
     })
 });
@@ -23,28 +24,33 @@ router.get('/cards', checkAuth, (req, res) => {
 router.post('/cards', checkAuth, (req, res) => {
     const { front, back, deckID } = req.body;
 
+    if (!deckID) return res.status(400).send('Unspecified deck');
+
+    if (!front || !back) return res.status(400).send('No front or back value');
+
     Deck.findById(deckID, (error, deck) => {
         
-        if (error) return res.status(500).send('some error');
-        if (!deck) return res.status(404).send('deck doesnt exist');
+        if (error) return res.status(404).send('Error finding deck');
+        if (!deck) return res.status(404).send('Deck doesnt exist');
 
         const newCard = new Card({ front, back, deck:deckID });
 
         newCard.save((error, card) => {
-            if (error) return res.status(400).send(error);
+            if (error) return res.status(404).send('Error addig card');
             res.status(200).send(card);
         });
     })
-
 });
 
 router.delete('/cards', checkAuth, (req, res) => {
     const id = req.headers.id;
 
-    Card.findByIdAndDelete(id, (err, deck) => {
-        if (err) return res.status(400).send();
-        if (!deck) return res.status(404).send();
-        res.status(200).send(deck);
+    if (!id) return res.status(400).send('Unspecified Card');
+
+    Card.findByIdAndDelete(id, (err, card) => {
+        if (err) return res.status(404).send('Error deleting card');
+        if (!card) return res.status(404).send('Card not found');
+        res.status(200).send(card);
     });
     
 });
@@ -53,10 +59,12 @@ router.delete('/cards', checkAuth, (req, res) => {
 router.put('/cards', checkAuth, (req, res) => {
     const { id, front, back } = req.body;
 
-    if (!id || !front || !back) return res.status(400).send();
+    if (!id) return res.status(400).send('Unspecified Card');
+
+    if (!front || !back) return res.status(400).send('No front or back value');
 
     Card.findByIdAndUpdate(id, { front, back }, (err, deck) => {
-        if (err) return res.status(400).send();
+        if (err) return res.status(404).send('Error updating card');
         res.status(200).send(deck);
     });
 
