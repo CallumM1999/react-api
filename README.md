@@ -1,12 +1,12 @@
 # React API
-Backend API for [Notes App](https://github.com/CallumM1999/react-notes)
+Backend API for [Notes App](https://github.com/thecallum/react-notes)
 
 ## Table of Contents
 * [About](#About)
 * [Installation](#Installation)
 
 ### About 
-This is a REST API build for [Notes App](https://github.com/CallumM1999/react-notes). 
+This is a REST API build for [Notes App](https://github.com/thecallum/react-notes). 
 
 The API uses MongoDB with Mongoose.
 
